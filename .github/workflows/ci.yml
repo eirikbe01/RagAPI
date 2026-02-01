@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install fastapi uvicorn chromadb requests
+          pip install fastapi uvicorn chromadb requests ollama
 
       - name: Rebuild embeddings
         run: python embed.py
