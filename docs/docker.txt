@@ -1,2 +1,2 @@
-Docker is a platform for packaging an application and all its dependencies into a container, so it runs the same way on your laptop, in CI, and in the cloud.
+Docker is a platform for an application and all its dependencies into a, so it runs the same way on your laptop, in CI, and in the cloud.
 In practice, it makes your apps portable, reproducible, and much easier to deploy because you ship the exact runtime environment together with the code.
