@@ -30,17 +30,26 @@ def query(q: str):
     results = collection.query(query_texts=[q], n_results=1)
     context = results["documents"][0][0] if results["documents"] else ""
 
-    answer = ollama.generate(
-        model=MODEL_NAME,
-        prompt=f"Context:\n{context}\n\nQuestion: {q}\n\nAnswer clearly and concisely.",
-        options={
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "num_predict": 120,
-        }
-    )
+    use_mock = os.getenv("USE_MOCK_LLM", "0") == "1"
 
-    return {"Answer:": answer["response"]}
+    if use_mock:
+        logging.info("Using mock LLM response")
+        # deterministic mock response for testing CI pipeline
+        return {"answer": context}
+    else:
+        logging.info("Using Ollama LLM for response generation")
+
+        # Constrain the model to the retrieved context to reduce hallucinations
+        answer = ollama.generate(
+            model=MODEL_NAME,
+            prompt=(
+                "You are a QA system that must answer using only the provided context. "
+                "If the context is missing the information, reply with \"I don't know.\"\n\n"
+                f"Context:\n{context}\n\nQuestion: {q}\n\nAnswer concisely using only the context."
+            )
+        )
+
+    return {"answer": answer["response"]}
 
 
 @app.post("/add")
